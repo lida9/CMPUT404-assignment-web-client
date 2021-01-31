@@ -32,7 +32,7 @@ class HTTPResponse(object):
         self.code = code
         self.body = body
     def __str__(self):
-        return self.body
+        return str(self.code) + "\n\n" + self.body
 
 class HTTPClient(object):
     #def get_host_port(self,url):
@@ -48,7 +48,9 @@ class HTTPClient(object):
         return int(code)
 
     def get_headers(self,data):
-        headers = data.split("\r\n\r\n")[0]
+        index = data.find("\r\n")
+        end_index = data.find("\r\n\r\n")
+        headers = data[index+2:end_index]
         return headers
 
     def get_body(self, data):
@@ -89,7 +91,6 @@ class HTTPClient(object):
         self.sendall(request)
         data = self.recvall(self.socket)
         self.close()
-        print(self.get_headers(data)+'\n')
         # get response code and body
         code = self.get_code(data)
         body = self.get_body(data)
@@ -120,7 +121,6 @@ class HTTPClient(object):
         self.sendall(request)
         data = self.recvall(self.socket)
         self.close()
-        print(self.get_headers(data)+'\n')
         # get response code and body
         code = self.get_code(data)
         body = self.get_body(data)
